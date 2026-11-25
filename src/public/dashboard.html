@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HouseTrack | Dashboard</title>
+</head>
+<body>
+
+    <h1>Welcome to HouseTrack!</h1>
+    <p>You have successfully logged in.</p>
+
+    <button id="logoutButton">Logout</button>
+
+    <script>
+        document.getElementById('logoutButton')
+            .addEventListener('click', async () => {
+
+                const response = await fetch('/auth/logout', {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    window.location.href = '/login.html';
+                }
+            });
+    </script>
+
+</body>
+</html>

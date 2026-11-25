@@ -1,3 +1,14 @@
+# Environment variables
+.env
+src/.env
+
+# Node modules
+node_modules/
+src/node_modules/
+
+# Logs
+*.loggit 
+
 # Logs
 logs
 *.log
@@ -155,3 +166,9 @@ vite.config.ts.timestamp-*
 .nx/cache
 .nx/workspace-data
 .nx/migrate-runs
+
+# Environment variables
+.env
+
+# Node modules
+node_modules/
