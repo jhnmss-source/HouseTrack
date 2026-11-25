@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HouseTrack - Login</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+  <div class="login-box">
+    <h1>HouseTrack</h1>
+    <p>Sign in to your account</p>
+    <form action="/login" method="POST">
+      <label>Email</label>
+      <input type="email" name="email" required>
+      <label>Password</label>
+      <input type="password" name="password" required>
+      <p id="error" class="error"></p>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>
