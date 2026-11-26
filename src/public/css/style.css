@@ -1,23 +1,21 @@
 /* Hello this is a test i am shan 002 */
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; }
-body { background: #f4f6f8; padding: 30px; color: #1f2a26; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Arial, sans-serif; }
+body { background: #f4f6f8; }
 
-/* LOGIN PAGE (login.html) */
-body:has(.login-container) { min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; background: #14382d; }
-.login-container { width: 100%; max-width: 400px; padding: 28px 26px 22px; background: #fff; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
-.login-container h1 { font-size: 24px; font-weight: 700; color: #1f2a26; margin-bottom: 4px; }
-.login-container .subtitle { font-size: 14px; color: #6b7470; margin-bottom: 20px; }
-.login-container .form-group { margin-bottom: 14px; }
+/* LOGIN */
+body:has(.login-container) { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; background: #14382d; }
+.login-container { width: 100%; max-width: 400px; background: #fff; padding: 28px 26px 22px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.login-container h1 { font-size: 24px; color: #1f2a26; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: #6b7470; margin-bottom: 20px; }
+.form-group { margin-bottom: 14px; }
 .login-container label { display: block; margin-bottom: 5px; font-size: 13px; color: #4b5550; }
-.login-container input { width: 100%; padding: 10px 12px; border: 1px solid #d6cfaa; border-radius: 5px; font-size: 15px; color: #1f2a26; background: #fff; }
+.login-container input { width: 100%; padding: 10px 12px; border: 1px solid #d6cfaa; border-radius: 5px; font-size: 15px; }
 .login-container input:focus { outline: none; border-color: #17694f; box-shadow: 0 0 0 3px rgba(23,105,79,.18); }
 .login-container button { width: 100%; margin-top: 6px; padding: 12px; background: #17694f; color: #fff; border: none; border-radius: 5px; font-size: 15px; font-weight: 600; cursor: pointer; }
 .login-container button:hover { background: #12573f; }
 .login-container button:disabled { opacity: .6; cursor: not-allowed; }
 #message { margin-top: 14px; font-size: 14px; color: #b3412f; }
-
-/* LOGIN (original classes, same theme) */
 .login-page { display: flex; justify-content: center; align-items: center; height: 100vh; background: #14382d; }
 .login-box { background: #fff; padding: 28px 26px; width: 400px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
 .login-box h1 { color: #1f2a26; margin-bottom: 4px; }
@@ -27,13 +25,11 @@ body:has(.login-container) { min-height: 100vh; display: flex; justify-content: 
 .login-box button { width: 100%; margin-top: 20px; padding: 12px; background: #17694f; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
 .error { color: #b3412f; font-size: 14px; margin-top: 10px; }
 
-/* DASHBOARD (dashboard.html) */
-body > h1 { color: #14382d; font-size: 26px; margin-bottom: 8px; }
-body > p { color: #6b7470; margin-bottom: 20px; }
-#logoutButton { padding: 10px 22px; background: #17694f; color: #fff; border: none; border-radius: 5px; font-size: 15px; font-weight: 600; cursor: pointer; }
+/* DASHBOARD */
+body > h1 { color: #14382d; font-size: 26px; margin: 30px 30px 8px; }
+body > p { color: #6b7470; margin: 0 30px 20px; }
+#logoutButton { margin-left: 30px; padding: 10px 22px; background: #17694f; color: #fff; border: none; border-radius: 5px; font-size: 15px; font-weight: 600; cursor: pointer; }
 #logoutButton:hover { background: #12573f; }
-
-/* DASHBOARD (original classes, same theme) */
 .sidebar { position: fixed; top: 0; left: 0; width: 220px; height: 100%; background: #14382d; padding: 20px; }
 .sidebar h2 { color: #fff; margin-bottom: 20px; }
 .sidebar a { display: block; color: #cfe0d8; padding: 10px; text-decoration: none; border-radius: 5px; }
