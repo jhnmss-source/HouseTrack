@@ -28,6 +28,7 @@ const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
 app.use('/api/tenants', require('./routes/tenants'));
 app.use('/api/units', require('./routes/units'));
+app.use('/api/receipts', require('./routes/receipts'));
 
 // Public files
 app.use(express.static(path.join(__dirname, 'public')));
