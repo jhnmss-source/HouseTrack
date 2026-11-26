@@ -55,6 +55,7 @@ CREATE TABLE units (
   monthly_rent  DECIMAL(10,2) NOT NULL,
   status        ENUM('Vacant','Occupied','Under Repair') NOT NULL DEFAULT 'Vacant',
   description   VARCHAR(255) NULL,
+  is_archived TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (unit_id),
   UNIQUE KEY uq_units_property_name (property_id, unit_name),
   CONSTRAINT fk_units_property FOREIGN KEY (property_id) REFERENCES properties(property_id)
