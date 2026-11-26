@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Units - HouseTrack</title>
+</head>
+<body>
+  <h1>Units</h1>
+
+  <h3 id="formTitle">Add unit</h3>
+  <input id="property" type="number" placeholder="Property ID (1 or 2)">
+  <input id="name" placeholder="Unit name">
+  <input id="rent" type="number" step="0.01" placeholder="Monthly rent">
+  <select id="status">
+    <option>Vacant</option>
+    <option>Occupied</option>
+    <option>Under Repair</option>
+  </select>
+  <input id="description" placeholder="Description">
+  <button onclick="save()">Save</button>
+  <button onclick="resetForm()">Cancel</button>
+  <p id="msg" style="color:red"></p>
+
+  <table border="1" cellpadding="6">
+    <thead>
+      <tr><th>Property</th><th>Unit</th><th>Rent</th><th>Status</th><th>Description</th><th>Actions</th></tr>
+    </thead>
+    <tbody id="list"></tbody>
+  </table>
+
+<script>
+let editId = null;
+let units = [];
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function api(url, options) {
+  const res = await fetch(url, options);
+  if (res.redirected) { window.location = '/login.html'; return null; }
+  return res.json();
+}
+
+async function load() {
+  const data = await api('/api/units');
+  if (!data) return;
+  units = data;
+  document.getElementById('list').innerHTML = units.map((u, i) => `
+    <tr>
+      <td>${esc(u.property_id)}</td>
+      <td>${esc(u.unit_name)}</td>
+      <td>${esc(u.monthly_rent)}</td>
+      <td>${esc(u.status)}</td>
+      <td>${esc(u.description)}</td>
+      <td>
+        <button onclick="edit(${i})">Edit</button>
+        <button onclick="archive(${u.unit_id})">Archive</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function save() {
+  const body = {
+    property_id: document.getElementById('property').value,
+    unit_name: document.getElementById('name').value.trim(),
+    monthly_rent: document.getElementById('rent').value,
+    status: document.getElementById('status').value,
+    description: document.getElementById('description').value.trim()
+  };
+  const data = await api(editId ? '/api/units/' + editId : '/api/units', {
+    method: editId ? 'PUT' : 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!data) return;
+  const failed = !!data.error || /required|must|exists|not exist|not found|error/i.test(data.message || '');
+  document.getElementById('msg').textContent = failed ? (data.error || data.message) : '';
+  if (!failed) { resetForm(); load(); }
+}
+
+function edit(i) {
+  const u = units[i];
+  editId = u.unit_id;
+  document.getElementById('formTitle').textContent = 'Edit unit';
+  document.getElementById('property').value = u.property_id;
+  document.getElementById('name').value = u.unit_name;
+  document.getElementById('rent').value = u.monthly_rent;
+  document.getElementById('status').value = u.status;
+  document.getElementById('description').value = u.description || '';
+}
+
+function resetForm() {
+  editId = null;
+  document.getElementById('formTitle').textContent = 'Add unit';
+  ['property','name','rent','description'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('status').value = 'Vacant';
+  document.getElementById('msg').textContent = '';
+}
+
+async function archive(id) {
+  if (!confirm('Archive this unit?')) return;
+  await api('/api/units/' + id + '/archive', { method: 'PATCH' });
+  load();
+}
+
+load();
+</script>
+</body>
+</html>
