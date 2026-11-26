@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Tenants - HouseTrack</title>
+</head>
+<body>
+  <h1>Tenants</h1>
+
+  <input id="search" placeholder="Search name or email">
+  <button onclick="load()">Filter</button>
+
+  <h3 id="formTitle">Add tenant</h3>
+  <input id="name" placeholder="Full name">
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Temporary password">
+  <input id="contact" placeholder="Contact number">
+  <input id="ecName" placeholder="Emergency contact name">
+  <input id="ecNumber" placeholder="Emergency contact number">
+  <input id="idType" placeholder="Valid ID type">
+  <button onclick="save()">Save</button>
+  <button onclick="resetForm()">Cancel</button>
+  <p id="msg" style="color:red"></p>
+
+  <table border="1" cellpadding="6">
+    <thead>
+      <tr><th>Name</th><th>Email</th><th>Contact</th><th>Emergency contact</th><th>ID type</th><th>Actions</th></tr>
+    </thead>
+    <tbody id="list"></tbody>
+  </table>
+
+<script>
+let editId = null;
+let tenants = [];
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function load() {
+  const q = document.getElementById('search').value;
+  const res = await fetch('/api/tenants?q=' + encodeURIComponent(q));
+  tenants = await res.json();
+  document.getElementById('list').innerHTML = tenants.map((t, i) => `
+    <tr>
+      <td>${esc(t.full_name)}</td>
+      <td>${esc(t.email)}</td>
+      <td>${esc(t.contact_number)}</td>
+      <td>${esc(t.emergency_contact_name)} ${esc(t.emergency_contact_number)}</td>
+      <td>${esc(t.valid_id_type)}</td>
+      <td>
+        <button onclick="edit(${i})">Edit</button>
+        <button onclick="archive(${t.tenant_id})">Archive</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function save() {
+  const body = {
+    full_name: document.getElementById('name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    password: document.getElementById('password').value,
+    contact_number: document.getElementById('contact').value.trim(),
+    emergency_contact_name: document.getElementById('ecName').value.trim(),
+    emergency_contact_number: document.getElementById('ecNumber').value.trim(),
+    valid_id_type: document.getElementById('idType').value.trim()
+  };
+  const res = await fetch(editId ? '/api/tenants/' + editId : '/api/tenants', {
+    method: editId ? 'PUT' : 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  document.getElementById('msg').textContent = data.error || '';
+  if (!data.error) { resetForm(); load(); }
+}
+
+function edit(i) {
+  const t = tenants[i];
+  editId = t.tenant_id;
+  document.getElementById('formTitle').textContent = 'Edit tenant';
+  document.getElementById('name').value = t.full_name;
+  document.getElementById('email').value = t.email;
+  document.getElementById('password').value = '';
+  document.getElementById('password').disabled = true;
+  document.getElementById('contact').value = t.contact_number;
+  document.getElementById('ecName').value = t.emergency_contact_name || '';
+  document.getElementById('ecNumber').value = t.emergency_contact_number || '';
+  document.getElementById('idType').value = t.valid_id_type || '';
+}
+
+function resetForm() {
+  editId = null;
+  document.getElementById('formTitle').textContent = 'Add tenant';
+  document.getElementById('password').disabled = false;
+  ['name','email','password','contact','ecName','ecNumber','idType']
+    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('msg').textContent = '';
+}
+
+async function archive(id) {
+  if (!confirm('Archive this tenant?')) return;
+  await fetch('/api/tenants/' + id + '/archive', { method: 'PUT' });
+  load();
+}
+
+load();
+</script>
+</body>
+</html>
