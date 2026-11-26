@@ -32,6 +32,11 @@ app.use('/units', unitRoutes);
 // Public files
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Homepage
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`HouseTrack server running at http://localhost:${PORT}`);
