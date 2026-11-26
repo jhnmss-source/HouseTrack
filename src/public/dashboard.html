@@ -8,10 +8,106 @@
 </head>
 <body>
 
-    <h1>Welcome to HouseTrack!</h1>
-    <p>You have successfully logged in.</p>
+    <aside class="sidebar">
+        <div class="brand">
+            <h2>HouseTrack</h2>
+            <span>Owner</span>
+        </div>
 
-    <button id="logoutButton">Logout</button>
+        <nav>
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="#">Units and Properties</a>
+            <a href="#">Tenants and Contracts</a>
+            <a href="#">Payments</a>
+            <a href="#">Repair Requests</a>
+            <a href="#">Reports</a>
+        </nav>
+
+        <button id="logoutButton" class="logout">Log out</button>
+    </aside>
+
+    <main class="content">
+        <h1>Dashboard</h1>
+
+        <div class="cards">
+            <div class="card">
+                <p>4</p>
+                <h3>Occupied units</h3>
+            </div>
+            <div class="card">
+                <p>1</p>
+                <h3>Vacant units</h3>
+            </div>
+            <div class="card">
+                <p>₱10,000</p>
+                <h3>Collected this month</h3>
+            </div>
+            <div class="card">
+                <p>2</p>
+                <h3>Overdue tenants</h3>
+            </div>
+            <div class="card">
+                <p>1 / 1</p>
+                <h3>Repairs pending / ongoing</h3>
+            </div>
+        </div>
+
+        <section class="panel">
+            <h2>Contracts nearing expiration (30 days)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tenant</th>
+                        <th>Unit</th>
+                        <th>Ends</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Maria Santos</td>
+                        <td>Main House · Room 2</td>
+                        <td>Nov 15, 2026</td>
+                        <td>15 days left</td>
+                    </tr>
+                    <tr>
+                        <td>Jun Reyes</td>
+                        <td>Side Apartment · Apt 1</td>
+                        <td>Oct 20, 2026</td>
+                        <td><span class="badge expired">EXPIRED</span> · Needs action</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="panel">
+            <h2>Overdue tenants (October 2026)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tenant</th>
+                        <th>Unit</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ana Cruz</td>
+                        <td>Main House · Room 4</td>
+                        <td>₱4,000</td>
+                        <td><span class="badge overdue">OVERDUE</span></td>
+                    </tr>
+                    <tr>
+                        <td>Ben Lopez</td>
+                        <td>Side Apartment · Apt 3</td>
+                        <td>₱6,500</td>
+                        <td><span class="badge overdue">OVERDUE</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
 
     <script>
         document.getElementById('logoutButton')
