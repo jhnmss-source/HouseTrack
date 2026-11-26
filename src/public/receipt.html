@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Receipt - HouseTrack</title>
+  <style>
+    @media print {
+      .no-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <p class="no-print"><a href="/receipts.html">&larr; Back to receipts</a></p>
+
+  <h1>HouseTrack</h1>
+  <h2>Official Receipt</h2>
+  <p id="msg" style="color:red"></p>
+
+  <table id="receipt" border="1" cellpadding="6" style="display:none">
+    <tr><th>Receipt no.</th><td id="number"></td></tr>
+    <tr><th>Date issued</th><td id="issued"></td></tr>
+    <tr><th>Tenant</th><td id="tenant"></td></tr>
+    <tr><th>Unit</th><td id="unit"></td></tr>
+    <tr><th>For</th><td id="due"></td></tr>
+    <tr><th>Payment date</th><td id="paydate"></td></tr>
+    <tr><th>Method</th><td id="method"></td></tr>
+    <tr><th>Reference no.</th><td id="ref"></td></tr>
+    <tr><th>Amount paid</th><td id="amount"></td></tr>
+    <tr><th>Issued by</th><td id="by"></td></tr>
+  </table>
+
+  <p class="no-print"><button onclick="window.print()">Print</button></p>
+
+<script>
+function set(id, value) {
+  document.getElementById(id).textContent = value ?? '';
+}
+
+function fmtDate(s) {
+  return s ? new Date(s).toLocaleDateString() : '';
+}
+
+async function load() {
+  const id = new URLSearchParams(location.search).get('id');
+  if (!id) {
+    document.getElementById('msg').textContent = 'No receipt selected.';
+    return;
+  }
+  const res = await fetch('/api/receipts/' + encodeURIComponent(id));
+  if (res.redirected) { window.location = '/login.html'; return; }
+  const r = await res.json();
+  if (r.error) {
+    document.getElementById('msg').textContent = r.error;
+    return;
+  }
+  set('number', r.receipt_number);
+  set('issued', fmtDate(r.issued_at));
+  set('tenant', r.tenant_name);
+  set('unit', r.unit_name);
+  set('due', r.due_description);
+  set('paydate', fmtDate(r.payment_date));
+  set('method', r.method);
+  set('ref', r.reference_number || '-');
+  set('amount', 'PHP ' + Number(r.amount).toFixed(2));
+  set('by', r.issued_by_name);
+  document.getElementById('receipt').style.display = '';
+}
+
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Receipts - HouseTrack</title>
+</head>
+<body>
+  <h1>Receipts</h1>
+
+  <input id="q" placeholder="Search receipt no., tenant, or unit">
+  <select id="method">
+    <option value="">All methods</option>
+    <option>Cash</option>
+    <option>GCash</option>
+    <option>Bank Transfer</option>
+  </select>
+  From <input id="from" type="date">
+  To <input id="to" type="date">
+  <button onclick="load()">Filter</button>
+  <button onclick="clearFilters()">Clear</button>
+  <p id="msg" style="color:red"></p>
+
+  <table border="1" cellpadding="6">
+    <thead>
+      <tr><th>Receipt no.</th><th>Tenant</th><th>Unit</th><th>For</th><th>Amount</th><th>Method</th><th>Payment date</th><th>Actions</th></tr>
+    </thead>
+    <tbody id="list"></tbody>
+  </table>
+
+<script>
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function fmtDate(s) {
+  return s ? new Date(s).toLocaleDateString() : '';
+}
+
+async function load() {
+  const params = new URLSearchParams();
+  ['q', 'method', 'from', 'to'].forEach(id => {
+    const v = document.getElementById(id).value.trim();
+    if (v) params.set(id, v);
+  });
+  const res = await fetch('/api/receipts?' + params.toString());
+  if (res.redirected) { window.location = '/login.html'; return; }
+  const data = await res.json();
+  if (data.error) {
+    document.getElementById('msg').textContent = data.error;
+    return;
+  }
+  document.getElementById('msg').textContent = data.length ? '' : 'No receipts found.';
+  document.getElementById('list').innerHTML = data.map(r => `
+    <tr>
+      <td>${esc(r.receipt_number)}</td>
+      <td>${esc(r.tenant_name)}</td>
+      <td>${esc(r.unit_name)}</td>
+      <td>${esc(r.due_description)}</td>
+      <td>PHP ${Number(r.amount).toFixed(2)}</td>
+      <td>${esc(r.method)}</td>
+      <td>${esc(fmtDate(r.payment_date))}</td>
+      <td><a href="/receipt.html?id=${encodeURIComponent(r.receipt_id)}">View / Print</a></td>
+    </tr>`).join('');
+}
+
+function clearFilters() {
+  ['q', 'method', 'from', 'to'].forEach(id => document.getElementById(id).value = '');
+  load();
+}
+
+load();
+</script>
+</body>
+</html>
