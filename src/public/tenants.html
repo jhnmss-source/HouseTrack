@@ -1,33 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tenants - HouseTrack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HouseTrack | Tenants and Contracts</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h1>Tenants</h1>
 
-  <input id="search" placeholder="Search name or email">
-  <button onclick="load()">Filter</button>
+  <aside class="sidebar">
+    <div class="brand">
+      <h2>HouseTrack</h2>
+      <span>Owner</span>
+    </div>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="units.html">Units and Properties</a>
+      <a href="tenants.html" class="active">Tenants and Contracts</a>
+      <a href="#">Payments</a>
+      <a href="#">Repair Requests</a>
+      <a href="#">Reports</a>
+    </nav>
+    <button id="logoutButton" class="logout">Log out</button>
+  </aside>
 
-  <h3 id="formTitle">Add tenant</h3>
-  <input id="name" placeholder="Full name">
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Temporary password">
-  <input id="contact" placeholder="Contact number">
-  <input id="ecName" placeholder="Emergency contact name">
-  <input id="ecNumber" placeholder="Emergency contact number">
-  <input id="idType" placeholder="Valid ID type">
-  <button onclick="save()">Save</button>
-  <button onclick="resetForm()">Cancel</button>
-  <p id="msg" style="color:red"></p>
+  <main class="content">
+    <h1>Tenants and Contracts</h1>
 
-  <table border="1" cellpadding="6">
-    <thead>
-      <tr><th>Name</th><th>Email</th><th>Contact</th><th>Emergency contact</th><th>ID type</th><th>Actions</th></tr>
-    </thead>
-    <tbody id="list"></tbody>
-  </table>
+    <div class="tabs">
+      <button class="tab active">Tenants</button>
+      <button class="tab" disabled title="Not available yet">Contracts</button>
+    </div>
+
+    <div class="toolbar">
+      <input id="search" placeholder="Search name or email">
+      <button class="btn btn-outline" onclick="load()">Filter</button>
+      <button class="btn btn-primary" onclick="openForm()">Add tenant</button>
+    </div>
+
+    <div class="form-panel" id="formPanel">
+      <h3 id="formTitle">Add tenant</h3>
+      <div class="form-grid">
+        <input id="name" placeholder="Full name">
+        <input id="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Temporary password">
+        <input id="contact" placeholder="Contact number">
+        <input id="ecName" placeholder="Emergency contact name">
+        <input id="ecNumber" placeholder="Emergency contact number">
+        <input id="idType" placeholder="Valid ID type">
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="save()">Save</button>
+        <button class="btn btn-outline" onclick="resetForm()">Cancel</button>
+      </div>
+      <p id="msg" class="form-msg"></p>
+    </div>
+
+    <section class="panel">
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Contact</th><th>Emergency contact</th><th>ID type</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="list"></tbody>
+      </table>
+    </section>
+  </main>
 
 <script>
 let editId = null;
@@ -42,7 +79,7 @@ async function load() {
   const q = document.getElementById('search').value;
   const res = await fetch('/api/tenants?q=' + encodeURIComponent(q));
   tenants = await res.json();
-  document.getElementById('list').innerHTML = tenants.map((t, i) => `
+  document.getElementById('list').innerHTML = tenants.length ? tenants.map(t => `
     <tr>
       <td>${esc(t.full_name)}</td>
       <td>${esc(t.email)}</td>
@@ -50,10 +87,17 @@ async function load() {
       <td>${esc(t.emergency_contact_name)} ${esc(t.emergency_contact_number)}</td>
       <td>${esc(t.valid_id_type)}</td>
       <td>
-        <button onclick="edit(${i})">Edit</button>
-        <button onclick="archive(${t.tenant_id})">Archive</button>
+        <button class="btn btn-outline btn-sm" onclick="edit(${t.tenant_id})">Edit</button>
+        <button class="btn btn-outline btn-sm" onclick="archive(${t.tenant_id})">Archive</button>
       </td>
-    </tr>`).join('');
+    </tr>`).join('')
+    : '<tr><td colspan="6" class="empty">No tenants found.</td></tr>';
+}
+
+function openForm() {
+  resetForm();
+  document.getElementById('formPanel').classList.add('open');
+  document.getElementById('name').focus();
 }
 
 async function save() {
@@ -76,8 +120,9 @@ async function save() {
   if (!data.error) { resetForm(); load(); }
 }
 
-function edit(i) {
-  const t = tenants[i];
+function edit(id) {
+  const t = tenants.find(x => x.tenant_id === id);
+  if (!t) return;
   editId = t.tenant_id;
   document.getElementById('formTitle').textContent = 'Edit tenant';
   document.getElementById('name').value = t.full_name;
@@ -88,6 +133,10 @@ function edit(i) {
   document.getElementById('ecName').value = t.emergency_contact_name || '';
   document.getElementById('ecNumber').value = t.emergency_contact_number || '';
   document.getElementById('idType').value = t.valid_id_type || '';
+  document.getElementById('msg').textContent = '';
+  const panel = document.getElementById('formPanel');
+  panel.classList.add('open');
+  panel.scrollIntoView({ behavior: 'smooth' });
 }
 
 function resetForm() {
@@ -97,6 +146,7 @@ function resetForm() {
   ['name','email','password','contact','ecName','ecNumber','idType']
     .forEach(id => document.getElementById(id).value = '');
   document.getElementById('msg').textContent = '';
+  document.getElementById('formPanel').classList.remove('open');
 }
 
 async function archive(id) {
@@ -104,6 +154,13 @@ async function archive(id) {
   await fetch('/api/tenants/' + id + '/archive', { method: 'PUT' });
   load();
 }
+
+document.getElementById('search').addEventListener('keydown', e => { if (e.key === 'Enter') load(); });
+
+document.getElementById('logoutButton').addEventListener('click', async () => {
+  const response = await fetch('/auth/logout', { method: 'POST' });
+  if (response.ok) window.location.href = '/login.html';
+});
 
 load();
 </script>

@@ -1,32 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Units - HouseTrack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HouseTrack | Units and Properties</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h1>Units</h1>
 
-  <h3 id="formTitle">Add unit</h3>
-  <input id="property" type="number" placeholder="Property ID (1 or 2)">
-  <input id="name" placeholder="Unit name">
-  <input id="rent" type="number" step="0.01" placeholder="Monthly rent">
-  <select id="status">
-    <option>Vacant</option>
-    <option>Occupied</option>
-    <option>Under Repair</option>
-  </select>
-  <input id="description" placeholder="Description">
-  <button onclick="save()">Save</button>
-  <button onclick="resetForm()">Cancel</button>
-  <p id="msg" style="color:red"></p>
+  <aside class="sidebar">
+    <div class="brand">
+      <h2>HouseTrack</h2>
+      <span>Owner</span>
+    </div>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="units.html" class="active">Units and Properties</a>
+      <a href="tenants.html">Tenants and Contracts</a>
+      <a href="#">Payments</a>
+      <a href="#">Repair Requests</a>
+      <a href="#">Reports</a>
+    </nav>
+    <button id="logoutButton" class="logout">Log out</button>
+  </aside>
 
-  <table border="1" cellpadding="6">
-    <thead>
-      <tr><th>Property</th><th>Unit</th><th>Rent</th><th>Status</th><th>Description</th><th>Actions</th></tr>
-    </thead>
-    <tbody id="list"></tbody>
-  </table>
+  <main class="content">
+    <h1>Units and Properties</h1>
+
+    <div class="tabs">
+      <button class="tab active">Units</button>
+      <button class="tab" disabled title="Not available yet">Properties</button>
+    </div>
+
+    <div class="toolbar">
+      <input id="search" placeholder="Search unit name">
+      <select id="filterStatus">
+        <option value="">All statuses</option>
+        <option>Vacant</option>
+        <option>Occupied</option>
+        <option>Under Repair</option>
+      </select>
+      <button class="btn btn-outline" onclick="render()">Filter</button>
+      <button class="btn btn-primary" onclick="openForm()">Add unit</button>
+    </div>
+
+    <div class="form-panel" id="formPanel">
+      <h3 id="formTitle">Add unit</h3>
+      <div class="form-grid">
+        <input id="property" type="number" placeholder="Property ID (1 or 2)">
+        <input id="name" placeholder="Unit name">
+        <input id="rent" type="number" step="0.01" placeholder="Monthly rent">
+        <select id="status">
+          <option>Vacant</option>
+          <option>Occupied</option>
+          <option>Under Repair</option>
+        </select>
+        <input id="description" placeholder="Description">
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="save()">Save</button>
+        <button class="btn btn-outline" onclick="resetForm()">Cancel</button>
+      </div>
+      <p id="msg" class="form-msg"></p>
+    </div>
+
+    <section class="panel">
+      <table>
+        <thead>
+          <tr><th>Property</th><th>Unit</th><th>Description</th><th>Rent</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="list"></tbody>
+      </table>
+    </section>
+  </main>
 
 <script>
 let editId = null;
@@ -35,6 +81,17 @@ let units = [];
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c =>
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function peso(n) {
+  return '₱' + Number(n || 0).toLocaleString('en-PH', { maximumFractionDigits: 2 });
+}
+
+function badgeClass(status) {
+  const s = String(status || '').toLowerCase();
+  if (s === 'occupied') return 'occupied';
+  if (s === 'vacant') return 'vacant';
+  return 'repair';
 }
 
 async function api(url, options) {
@@ -47,18 +104,36 @@ async function load() {
   const data = await api('/api/units');
   if (!data) return;
   units = data;
-  document.getElementById('list').innerHTML = units.map((u, i) => `
+  render();
+}
+
+function render() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const st = document.getElementById('filterStatus').value;
+  const rows = units.filter(u =>
+    (!q || String(u.unit_name).toLowerCase().includes(q)) &&
+    (!st || u.status === st)
+  );
+
+  document.getElementById('list').innerHTML = rows.length ? rows.map(u => `
     <tr>
       <td>${esc(u.property_id)}</td>
       <td>${esc(u.unit_name)}</td>
-      <td>${esc(u.monthly_rent)}</td>
-      <td>${esc(u.status)}</td>
       <td>${esc(u.description)}</td>
+      <td>${peso(u.monthly_rent)}</td>
+      <td><span class="badge ${badgeClass(u.status)}">${esc(String(u.status).toUpperCase())}</span></td>
       <td>
-        <button onclick="edit(${i})">Edit</button>
-        <button onclick="archive(${u.unit_id})">Archive</button>
+        <button class="btn btn-outline btn-sm" onclick="edit(${u.unit_id})">Edit</button>
+        <button class="btn btn-outline btn-sm" onclick="archive(${u.unit_id})">Archive</button>
       </td>
-    </tr>`).join('');
+    </tr>`).join('')
+    : '<tr><td colspan="6" class="empty">No units found.</td></tr>';
+}
+
+function openForm() {
+  resetForm();
+  document.getElementById('formPanel').classList.add('open');
+  document.getElementById('property').focus();
 }
 
 async function save() {
@@ -80,8 +155,9 @@ async function save() {
   if (!failed) { resetForm(); load(); }
 }
 
-function edit(i) {
-  const u = units[i];
+function edit(id) {
+  const u = units.find(x => x.unit_id === id);
+  if (!u) return;
   editId = u.unit_id;
   document.getElementById('formTitle').textContent = 'Edit unit';
   document.getElementById('property').value = u.property_id;
@@ -89,6 +165,10 @@ function edit(i) {
   document.getElementById('rent').value = u.monthly_rent;
   document.getElementById('status').value = u.status;
   document.getElementById('description').value = u.description || '';
+  document.getElementById('msg').textContent = '';
+  const panel = document.getElementById('formPanel');
+  panel.classList.add('open');
+  panel.scrollIntoView({ behavior: 'smooth' });
 }
 
 function resetForm() {
@@ -97,6 +177,7 @@ function resetForm() {
   ['property','name','rent','description'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('status').value = 'Vacant';
   document.getElementById('msg').textContent = '';
+  document.getElementById('formPanel').classList.remove('open');
 }
 
 async function archive(id) {
@@ -104,6 +185,13 @@ async function archive(id) {
   await api('/api/units/' + id + '/archive', { method: 'PATCH' });
   load();
 }
+
+document.getElementById('search').addEventListener('keydown', e => { if (e.key === 'Enter') render(); });
+
+document.getElementById('logoutButton').addEventListener('click', async () => {
+  const response = await fetch('/auth/logout', { method: 'POST' });
+  if (response.ok) window.location.href = '/login.html';
+});
 
 load();
 </script>

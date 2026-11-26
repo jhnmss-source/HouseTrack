@@ -1,4 +1,4 @@
-/* Hello this is a test i am shan 003 */
+/* Hello this is a test i am shan 004 */
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Arial, sans-serif; }
 body { background: #f4f3ef; color: #1f2a26; }
@@ -50,3 +50,32 @@ body:has(.login-container) { display: flex; justify-content: center; align-items
 .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 4px; }
 .badge.expired { background: #f6e7b8; color: #8a6d1d; }
 .badge.overdue { background: #f9dcdc; color: #b3412f; }
+
+/* UNITS & TENANTS */
+.tabs { display: flex; gap: 6px; margin: 14px 0 18px; }
+.tab { padding: 7px 14px; font-size: 13px; font-weight: 600; border: none; border-radius: 5px; background: #e6e4dc; color: #4b5550; cursor: pointer; }
+.tab.active { background: #17694f; color: #fff; }
+.tab:disabled { cursor: not-allowed; opacity: .7; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; }
+.toolbar input, .toolbar select, .form-grid input, .form-grid select { padding: 9px 12px; border: 1px solid #d6cfaa; border-radius: 5px; font-size: 14px; background: #fff; color: #1f2a26; }
+.toolbar input { width: 220px; }
+.toolbar input:focus, .toolbar select:focus, .form-grid input:focus, .form-grid select:focus { outline: none; border-color: #17694f; box-shadow: 0 0 0 3px rgba(23,105,79,.18); }
+.form-grid input:disabled { background: #f0efea; color: #9a9f9c; }
+.btn { padding: 9px 16px; font-size: 14px; font-weight: 600; border: 1px solid #17694f; border-radius: 5px; cursor: pointer; }
+.btn-primary { background: #17694f; color: #fff; }
+.btn-primary:hover { background: #12573f; }
+.btn-outline { background: #fff; color: #17694f; }
+.btn-outline:hover { background: #eef5f1; }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+.panel td .btn + .btn { margin-left: 6px; }
+.form-panel { display: none; background: #fff; border: 1px solid #e3e1da; border-radius: 6px; padding: 18px; margin-top: 18px; }
+.form-panel.open { display: block; }
+.form-panel h3 { font-size: 15px; margin-bottom: 12px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.form-actions { display: flex; gap: 8px; margin-top: 14px; }
+.form-msg { margin-top: 10px; font-size: 14px; color: #b3412f; }
+.panel .empty { text-align: center; color: #6b7470; padding: 20px; }
+.badge.occupied { background: #dbe7f7; color: #2f5d8a; }
+.badge.vacant { background: #f6e7b8; color: #8a6d1d; }
+.badge.repair { background: #fbe3cf; color: #a5561c; }
+.badge.paid, .badge.active { background: #d8efe3; color: #17694f; }
