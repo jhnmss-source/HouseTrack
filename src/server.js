@@ -26,6 +26,8 @@ app.use(session({
 // Routes
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
+const unitRoutes = require('./routes/units');
+app.use('/units', unitRoutes);
 
 // Public files
 app.use(express.static(path.join(__dirname, 'public')));
