@@ -6,11 +6,11 @@ USE housetrack;
 
 -- users (1 Owner, 1 System Administrator, 4 Tenants)
 INSERT INTO users (user_id, full_name, email, password_hash, role, status) VALUES
-(1, 'Roberto Alano',   'roberto.alano@example.com',  '$2b$10$PLACEHOLDERHASHownerxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'Owner', 'Active'),
-(2, 'Carlo Reyes',     'carlo.reyes@example.com',    '$2b$10$PLACEHOLDERHASHadminxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'System Administrator', 'Active'),
+(1, 'Roberto Alano',   'roberto.alano@example.com',  '$2b$10$dkQz7h5LpwBG7TOkGWSXXO3RgdNropDe6rhIdQJFuONLu56LaYJJa', 'Owner', 'Active'),
+(2, 'Carlo Reyes',     'carlo.reyes@example.com',    '$2b$10$QhSbla07uvzH6yjfYBLz0umtPKsTKfqyQG0JDEBp/8EyDc1VXSala', 'System Administrator', 'Active'),
 (3, 'Maria Santos',    'maria.santos@example.com',   '$2b$10$iQAilhEpRuROfbdy37VTN.vjl5P/.3R/MVj7H5AyDMJKuvfGP7.zC', 'Tenant', 'Active'),
-(4, 'Ana Cruz',        'ana.cruz@example.com',       '$2b$10$PLACEHOLDERHASHtenant2xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'Tenant', 'Active'),
-(5, 'Juan Dela Cruz',  'juan.delacruz@example.com',  '$2b$10$PLACEHOLDERHASHtenant3xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'Tenant', 'Active'),
+(4, 'Ana Cruz',        'ana.cruz@example.com',       '$2b$10$fLyq/.bwmMC0UITNTQy25OEPV1hsB038bscDAMOwtujtvI0BOuiO6', 'Tenant', 'Active'),
+(5, 'Juan Dela Cruz',  'juan.delacruz@example.com',  '$2b$10$fYV0eaAxwgcxubY0nMSl5.C1rvb.XMfjR56fQD2fgO8YOjp1NBohK', 'Tenant', 'Active'),
 (6, 'Pedro Ramos',     'pedro.ramos@example.com',    '$2b$10$PLACEHOLDERHASHtenant4xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'Tenant', 'Active');
 
 -- tenants
